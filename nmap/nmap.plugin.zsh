@@ -1,7 +1,6 @@
 function whoup() {
-  lan_ip=$(ip addr | rg -o "(192\.168\.[0-9]{1,3}\.[0-9]{1,3}|10\.0\.[0-9]{1,3}\.[0-9]{1,3})/24")
-  echo "lan_ip: $lan_ip"
-  lan_ip=$(echo "$lan_ip" | sed 's/\.[0-9]\{1,3\}\/[0-9]\{1,2\}$/.0\/24/')
-  nmap -sL "$lan_ip" | rg "\("
+  ip4_addr=$(nmcli device show wlan0 | rg IP4.ADDRESS | sed 's/IP4.ADDRESS\[1\]:\s*//')
+  echo "IP4 ADDRESS: $ip4_addr"
+  ip4_addr=$(echo "$ip4_addr" | sed 's/\.[0-9]\{1,3\}\/[0-9]\{1,2\}$/.0\/24/')
+  nmap -sL "$ip4_addr" | rg "\("
 }
-
