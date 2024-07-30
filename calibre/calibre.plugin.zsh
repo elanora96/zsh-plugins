@@ -4,18 +4,18 @@
 # - has a user "guest" with a password "books" (this is my read-only user)
 # Otherwise, this can only run when calibre is not running
 function calibre-books() {
-  tty=""
+  local tty=""
   if [[ -t 1 ]]; then
     tty="True"
   fi
 
-  calibre_server_address=http://localhost:8084
+  local calibre_server_address=http://localhost:8084
 
-  ansi_bold="\033[1m"
-  ansi_bright_blue="\033[34m"
-  ansi_default="\033[0m"
+  local ansi_bold="\033[1m"
+  local ansi_bright_blue="\033[34m"
+  local ansi_default="\033[0m"
 
-  calibre_library=""
+  local calibre_library=""
 
   # If calibre is running, we have to connect through calibre-server
   # Otherwise, we can access the db directly
