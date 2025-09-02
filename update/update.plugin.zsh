@@ -1,28 +1,32 @@
-function _p_print {
-  print -P "%F{magenta}❯ $1 %f"
+function _print_n_run {
+  gum style --background 99 "$1" && eval "$1"
 }
 
 function upgrade_all {
-  print -P "%F{cyan}If it has been a bit, maybe run reflecgrade()?%f"
-  _p_print "paru -Syu"
-  paru -Syu
-  # _p_print "nix-channel --update"
-  # nix-channel --update
-  _p_print "rustup update"
-  rustup update
-  # _p_print "pipx upgrade-all"
-  # pipx upgrade-all
-  _p_print 'nvim --headless "+Lazy! sync" +qa'
-  nvim --headless "+Lazy! sync" +qa
-  _p_print "doom upgrade --aot -j 8 -!"
-  doom upgrade
-  _p_print "code --update-extensions"
-  code --update-extensions
-  _p_print "tldr --update"
-  tldr --update
-  _p_print "omz update"
-  omz update
-  _p_print "source ~/.zshrc"
-  source "$HOME"/.zshrc
-}
+  local -A hashmap
+  hashmap=(
+    "reflector"   "reflecgrade"
+    "paru"        "paru -Syu"
+    "rustup"      "rustup update"
+    "nvim"        'nvim --headless "+Lazy! sync" +qa'
+    "doom"        "doom upgrade --aot -j 8 -!"
+    "code"        "code --update-extensions"
+    "tldr"        "tldr --update"
+    "sheldon"     "sheldon lock --update"
+  )
 
+  # Ask what to upgrade, returns a string array of keys
+  local commands=$(gum choose --no-limit --ordered "${(@k)hashmap}" --selected="*")
+
+  # If the key is in the list, eval the command in the value
+  # It makes more sense to loop through the array
+  # But shell remains so weird to me so I'm just doing it the way I could make work
+  for key in "${(@k)hashmap}"; do
+    if (( "$commands[(I)$key]" )); then
+        _print_n_run "${hashmap[$key]}"
+    fi
+  done
+
+  # Source .zshrc to remove weird edge cases
+  _print_n_run "source $HOME/.zshrc"
+}
